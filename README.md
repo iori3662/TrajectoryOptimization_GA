@@ -4,7 +4,7 @@ HIMES想定機に対する **6自由度軌道最適化（GA）** のC++実装で
 
 ## 概要
 - 姿勢はクォータニオンで表現（特異点回避）
-- HIMES簡易空力テーブル（Mach/α/β）を3次元線形補間
+- HIMES簡易空力テーブル（Mach/alpha/beta）を3次元線形補間
 - 制約（動圧・熱流束・荷重）を適応度へ明示的にペナルティ化
 - OpenMP並列評価 + 計算時間上限による世代打ち切り
 - 最良個体の時系列を `results/best_trajectory.csv` に保存
@@ -30,4 +30,4 @@ run('scripts/visualize_results.m')
 
 
 ## JAXA文献反映について
-本版ではJAXA公開ページ（R20EA2121, HIMICO Mach5の図情報）を参照し、空力テーブルの軸範囲（Mach/α/β）を文献準拠へ調整しています。数値生データは公開ページに含まれないため、現状は近似テーブル実装です。詳細は `docs/jaxa_himes_data_note.md` を参照してください。
+本版ではJAXA公開ページ（R20EA2121, HIMICO Mach5の図情報）を参照し、空力テーブルの軸範囲（Mach/alpha/beta）を文献準拠へ調整しています。数値生データは公開ページに含まれないため、現状は近似テーブル実装です。詳細は `docs/jaxa_himes_data_note.md` を参照してください。

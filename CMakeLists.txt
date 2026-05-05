@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Visual Studio/MSVC で UTF-8 ソースを正しく扱う
+if(MSVC)
+  add_compile_options(/utf-8)
+endif()
+
 find_package(OpenMP)
 add_executable(trajectory_ga src/main.cpp)
 if(OpenMP_CXX_FOUND)

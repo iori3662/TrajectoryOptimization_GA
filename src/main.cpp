@@ -18,8 +18,9 @@
 namespace {
 
 // 角度変換係数
-constexpr double kDeg2Rad = M_PI / 180.0;
-constexpr double kRad2Deg = 180.0 / M_PI;
+constexpr double kPi = 3.14159265358979323846;
+constexpr double kDeg2Rad = kPi / 180.0;
+constexpr double kRad2Deg = 180.0 / kPi;
 
 // 地球・大気モデル
 constexpr double kEarthRadius = 6378137.0;
@@ -78,7 +79,7 @@ Coeff coeffModel(double mach, double alphaDeg, double betaDeg) {
 
 double lerp(double a, double b, double t) { return a + (b - a) * t; }
 
-// Mach-α-β 3次元線形補間
+// Mach-alpha-beta 3次元線形補間
 Coeff interpolateAero(double mach, double alphaDeg, double betaDeg) {
     auto idx = [](const std::vector<double>& g, double v){
         double vv = std::clamp(v, g.front(), g.back());

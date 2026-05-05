@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cstdint>
 #include <functional>
+#include <filesystem>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -55,6 +57,19 @@ struct Control {
     double alpha;        // angle of attack [rad]
     double bank;         // bank angle [rad]
     double yawCmd;       // yaw offset [rad]
+};
+
+
+struct LogRow {
+    double time;
+    double altitude;
+    double speed;
+    double gammaDeg;
+    double mass;
+    double thrustFrac;
+    double alphaDeg;
+    double bankDeg;
+    double yawDeg;
 };
 
 struct Individual {
@@ -279,6 +294,25 @@ int main() {
                   << ", bank[deg]=" << c.bank / kDeg2Rad
                   << ", yaw[deg]=" << c.yawCmd / kDeg2Rad << '\n';
     }
+
+    std::filesystem::create_directories("results");
+    std::ofstream ofs("results/best_trajectory.csv");
+    ofs << "time_s,altitude_m,speed_mps,gamma_deg,mass_kg,thrust_frac,alpha_deg,bank_deg,yaw_deg\n";
+
+    State sim = x0;
+    double t = 0.0;
+    for (const auto& g : best.genes) {
+        Control u = clampControl(g);
+        const double alt = norm(sim.r) - kEarthRadius;
+        const double spd = norm(sim.v);
+        const double gam = flightPathAngle(sim) / kDeg2Rad;
+        ofs << t << "," << alt << "," << spd << "," << gam << "," << sim.mass << ","
+            << u.thrustFrac << "," << (u.alpha / kDeg2Rad) << "," << (u.bank / kDeg2Rad) << ","
+            << (u.yawCmd / kDeg2Rad) << "\n";
+        sim = rk4Step(sim, u, himes, kDt);
+        t += kDt;
+    }
+    std::cout << "\nSaved: results/best_trajectory.csv\n";
 
     return 0;
 }

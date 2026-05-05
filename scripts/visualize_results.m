@@ -1,49 +1,29 @@
-% MATLAB visualization for TrajectoryOptimization_GA outputs
+% TrajectoryOptimization_GA 可視化スクリプト（日本語版）
 clear; clc;
 
 result_file = fullfile('results', 'best_trajectory.csv');
 if ~isfile(result_file)
-    error('Result file not found: %s\nRun trajectory_ga first.', result_file);
+    error('結果ファイルが見つかりません: %s\n先に trajectory_ga を実行してください。', result_file);
 end
 
 T = readtable(result_file);
 
-figure('Name','Trajectory Overview','Color','w');
-tiledlayout(2,2,'Padding','compact','TileSpacing','compact');
+figure('Name','軌道状態','Color','w');
+tiledlayout(3,2,'Padding','compact','TileSpacing','compact');
+nexttile; plot(T.time_s, T.altitude_m/1000,'LineWidth',1.4); grid on; xlabel('時間 [s]'); ylabel('高度 [km]');
+nexttile; plot(T.time_s, T.speed_mps,'LineWidth',1.4); grid on; xlabel('時間 [s]'); ylabel('速度 [m/s]');
+nexttile; plot(T.time_s, T.gamma_deg,'LineWidth',1.4); grid on; xlabel('時間 [s]'); ylabel('飛行経路角 [deg]');
+nexttile; plot(T.time_s, T.mass_kg,'LineWidth',1.4); grid on; xlabel('時間 [s]'); ylabel('質量 [kg]');
+nexttile; plot(T.time_s, T.qdyn_pa/1000,'LineWidth',1.4); grid on; xlabel('時間 [s]'); ylabel('動圧 [kPa]');
+nexttile; plot(T.time_s, T.load_g,'LineWidth',1.4); grid on; xlabel('時間 [s]'); ylabel('荷重 [g]');
 
-nexttile;
-plot(T.time_s, T.altitude_m/1000,'LineWidth',1.5);
-xlabel('Time [s]'); ylabel('Altitude [km]'); grid on; title('Altitude');
+figure('Name','制御入力と熱流束','Color','w');
+tiledlayout(3,2,'Padding','compact','TileSpacing','compact');
+nexttile; plot(T.time_s, T.thrust_frac,'LineWidth',1.2); grid on; xlabel('時間 [s]'); ylabel('推力率 [-]');
+nexttile; plot(T.time_s, T.alpha_deg,'LineWidth',1.2); grid on; xlabel('時間 [s]'); ylabel('迎角 [deg]');
+nexttile; plot(T.time_s, T.beta_deg,'LineWidth',1.2); grid on; xlabel('時間 [s]'); ylabel('横滑り角 [deg]');
+nexttile; plot(T.time_s, T.bank_deg,'LineWidth',1.2); grid on; xlabel('時間 [s]'); ylabel('バンク角 [deg]');
+nexttile; plot(T.time_s, T.yaw_deg,'LineWidth',1.2); grid on; xlabel('時間 [s]'); ylabel('ヨー指令 [deg]');
+nexttile; plot(T.time_s, T.heat_wm2/1e6,'LineWidth',1.2); grid on; xlabel('時間 [s]'); ylabel('熱流束 [MW/m^2]');
 
-nexttile;
-plot(T.time_s, T.speed_mps,'LineWidth',1.5);
-xlabel('Time [s]'); ylabel('Speed [m/s]'); grid on; title('Speed');
-
-nexttile;
-plot(T.time_s, T.gamma_deg,'LineWidth',1.5);
-xlabel('Time [s]'); ylabel('\gamma [deg]'); grid on; title('Flight-path Angle');
-
-nexttile;
-plot(T.time_s, T.mass_kg,'LineWidth',1.5);
-xlabel('Time [s]'); ylabel('Mass [kg]'); grid on; title('Mass');
-
-figure('Name','Control Profile','Color','w');
-tiledlayout(2,2,'Padding','compact','TileSpacing','compact');
-
-nexttile;
-plot(T.time_s, T.thrust_frac,'LineWidth',1.3);
-xlabel('Time [s]'); ylabel('Thrust frac [-]'); grid on; title('Thrust');
-
-nexttile;
-plot(T.time_s, T.alpha_deg,'LineWidth',1.3);
-xlabel('Time [s]'); ylabel('\alpha [deg]'); grid on; title('Angle of attack');
-
-nexttile;
-plot(T.time_s, T.bank_deg,'LineWidth',1.3);
-xlabel('Time [s]'); ylabel('Bank [deg]'); grid on; title('Bank');
-
-nexttile;
-plot(T.time_s, T.yaw_deg,'LineWidth',1.3);
-xlabel('Time [s]'); ylabel('Yaw cmd [deg]'); grid on; title('Yaw command');
-
-disp('Visualization complete.');
+disp('可視化が完了しました。');

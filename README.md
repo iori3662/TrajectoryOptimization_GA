@@ -1,28 +1,33 @@
 # TrajectoryOptimization_GA
 
-HIMES（極超音速スペースプレーン想定）を対象に、**6自由度シミュレーション + 遺伝的アルゴリズム（GA）**で軌道最適化する C++ サンプルです。
+HIMES想定機に対する **6自由度軌道最適化（GA）** のC++実装です。
 
-## 仕様
-- 状態量: 位置・速度・オイラー角・角速度・質量（6DoF + 質量）
-- 数値積分: RK4
-- 最適化: 実数値遺伝子を使った GA（エリート保存 + トーナメント選択 + 交叉 + 突然変異）
-- 機体: HIMES 相当の代表パラメータ（質量・空力参照面積・推力・Isp・慣性）
+## 概要
+- 姿勢はクォータニオンで表現（特異点回避）
+- HIMES簡易空力テーブル（Mach/α/β）を3次元線形補間
+- 制約（動圧・熱流束・荷重）を適応度へ明示的にペナルティ化
+- OpenMP並列評価 + 計算時間上限による世代打ち切り
+- 最良個体の時系列を `results/best_trajectory.csv` に保存
 
-## ビルド
+## 構成
+- `src/main.cpp`: 6DoF+GA本体
+- `scripts/visualize_results.m`: MATLAB可視化
+- `docs/algorithm_details.md`: 手法詳細・文献
+- `results/`: 出力先（`.gitignore`で除外）
+
+## ビルドと実行
 ```bash
 cmake -S . -B build
 cmake --build build -j
-```
-
-## 実行
-```bash
 ./build/trajectory_ga
 ```
 
-## 補足
-この実装は「オンボード計算でリアルタイム誘導に使える構造」のたたき台です。実機適用には、
-- HIMESの正式空力データベース（Mach/Re/α/β依存）
-- 高精度姿勢運動方程式（クォータニオン推奨）
-- 推進系制約・熱制約・動圧制約
-- 並列GAやMPCとのハイブリッド化
-などの拡張が必要です。
+## MATLAB可視化
+```matlab
+cd('TrajectoryOptimization_GA')
+run('scripts/visualize_results.m')
+```
+
+
+## JAXA文献反映について
+本版ではJAXA公開ページ（R20EA2121, HIMICO Mach5の図情報）を参照し、空力テーブルの軸範囲（Mach/α/β）を文献準拠へ調整しています。数値生データは公開ページに含まれないため、現状は近似テーブル実装です。詳細は `docs/jaxa_himes_data_note.md` を参照してください。
